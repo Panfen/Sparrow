@@ -20,6 +20,8 @@ export default {
   ],
   plugins: [
     resolve(),
-    babel(), // 使用 babel 插件
+    babel({
+      exclude: 'node_modules/**', // 只编译我们的源代码，忽略第三方代码
+    }), // 使用 babel 插件
   ],
 };
