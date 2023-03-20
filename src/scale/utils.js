@@ -36,8 +36,47 @@ export function ticks(min, max, count) {
   const start = Math.ceil(min / step);
   const stop = Math.floor(max / step);
   const n = Math.ceil(stop - start + 1);
+  // n不一定等于count，所以生成的ticks的数量可能和指定的不一样
+  const values = new Array(n);
+  for (let i = 0; i < n; i += 1) {
+    values[i] = round((start + i) * step);
+  }
+  return values;
+}
+
+// 简单解决js的精度问题：0.1 + 0.2 !== 0.3
+export function round(n) {
+  return Math.round(n * 1e12) / 1e12;
 }
 
 export function nice(domain, interval) {
+  const [min, max] = domain;
+  return [interval.floor(min), interval.ceil(max)];
+}
 
+export function ceil(n, base) {
+  return base * Math.ceil(n / base);
+}
+
+export function floor(n, base) {
+  return base * Math.floor(n / base);
+}
+
+// 通过对象序列化结果简单判断两个对象是否相等
+export function equal(a, b) {
+  return JSON.stringify(a) === JSON.stringify(b);
+}
+
+export function band({ domain, range, padding }) {
+  const [r0, r1] = range;
+  const n = domain.length;
+  const step = (r1 - r0) / (n + padding);
+  const bandWidth = step * (1 - padding);
+  const interval = step - bandWidth;
+  const x = (_, i) => r0 + interval + step * i;
+  return {
+    step,
+    bandWidth,
+    bandRange: new Array(n).fill(0).map(x),
+  };
 }
